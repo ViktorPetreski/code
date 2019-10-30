@@ -1,5 +1,7 @@
 package com.fri.code.exercises.lib;
 
+import java.util.List;
+
 public class ExerciseMetadata {
     private Integer exerciseID;
     private String content;
@@ -7,6 +9,15 @@ public class ExerciseMetadata {
 
     private Integer subjectID;
 
+    private List<InputMetadata> inputs;
+
+    public List<InputMetadata> getInputs() {
+        return inputs;
+    }
+
+    public void setInputs(List<InputMetadata> inputs) {
+        this.inputs = inputs;
+    }
 
     public Integer getExerciseID() {
         return exerciseID;
@@ -39,8 +50,6 @@ public class ExerciseMetadata {
     public void setSubjectID(Integer subjectID) {
         this.subjectID = subjectID;
     }
-
-
 
 
 }

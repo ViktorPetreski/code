@@ -1,6 +1,7 @@
 package com.fri.code.exercises.models.entities;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "exercise_metadata")
@@ -25,7 +26,19 @@ public class ExerciseMetadataEntity {
     @Column(name = "subjectID")
     private Integer subjectID;
 
+    @ElementCollection
+    private List<String> inputs;
+
+    public List<String> getInputs() {
+        return inputs;
+    }
+
+    public void setInputs(List<String> inputs) {
+        this.inputs = inputs;
+    }
+
     public Integer getSubjectID() {
+
         return subjectID;
     }
 

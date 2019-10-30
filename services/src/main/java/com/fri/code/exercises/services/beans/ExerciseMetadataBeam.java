@@ -1,20 +1,31 @@
 package com.fri.code.exercises.services.beans;
 
+import com.fri.code.exercises.lib.CompilerOutput;
+import com.fri.code.exercises.lib.CompilerReadyInput;
 import com.fri.code.exercises.lib.ExerciseMetadata;
+import com.fri.code.exercises.lib.InputMetadata;
 import com.fri.code.exercises.models.converters.ExerciseMetadataConverter;
 import com.fri.code.exercises.models.entities.ExerciseMetadataEntity;
 import com.kumuluz.ee.rest.beans.QueryParameters;
 import com.kumuluz.ee.rest.utils.JPAUtils;
+import jdk.internal.util.xml.impl.Input;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -32,10 +43,13 @@ public class ExerciseMetadataBeam {
 
     private String baseURL;
 
+    private String compilerApiUrl;
+
     @PostConstruct
     void init() {
         httpClient = ClientBuilder.newClient();
         baseURL = "http://localhost:8081";
+        compilerApiUrl = "https://api.jdoodle.com/v1/execute";
     }
 
 //    @SuppressWarnings("JpaQueryApiInspection")
@@ -57,6 +71,7 @@ public class ExerciseMetadataBeam {
         }
 
         ExerciseMetadata exerciseMetadata = ExerciseMetadataConverter.toDto(entity);
+        exerciseMetadata.setInputs(getInputsForExercise(exerciseID));
 
         return exerciseMetadata;
     }
@@ -95,6 +110,39 @@ public class ExerciseMetadataBeam {
             return false;
         }
         return true;
+    }
+
+    public List<InputMetadata> getInputsForExercise(Integer exerciseID) {
+        try {
+//            log.severe(exerciseID + "");
+           return httpClient
+                    .target(baseURL + "/v1/inputs?exerciseID=" + exerciseID)
+                    .request().get(new GenericType<List<InputMetadata>>() {});
+        } catch (WebApplicationException | ProcessingException e) {
+            log.severe(e.getMessage());
+            throw new InternalServerErrorException(e);
+        }
+    }
+
+    public List<CompilerOutput> getOutput(List<InputMetadata> inputs, ExerciseMetadata exercise) {
+//        String content = inputMetadata.getContent();
+        List<CompilerOutput> outputs = new ArrayList<>();
+        for(InputMetadata in : inputs) {
+            String script = "x=input()\nprint(x)"; // treba da e getScript(exerciseID, currentUserID);
+            CompilerReadyInput input = new CompilerReadyInput();
+            input.setLanguage("python3"); // treba da e setLanguage(getSubject(exerciseID).getLanguage())
+            input.setScript(script);
+            if(!in.getContent().isEmpty()) input.setStdin(in.getContent());
+            input.setVersionIndex("2");
+            try {
+                CompilerOutput out = httpClient.target(compilerApiUrl).request().post(Entity.entity(input, MediaType.APPLICATION_JSON), CompilerOutput.class);
+                outputs.add(out);
+            } catch (WebApplicationException | ProcessingException e) {
+                log.severe(e.getMessage());
+                throw new InternalServerErrorException(e);
+            }
+        }
+        return outputs;
     }
 
 
