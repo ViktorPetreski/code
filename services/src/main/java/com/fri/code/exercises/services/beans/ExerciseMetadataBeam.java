@@ -8,7 +8,6 @@ import com.fri.code.exercises.models.converters.ExerciseMetadataConverter;
 import com.fri.code.exercises.models.entities.ExerciseMetadataEntity;
 import com.kumuluz.ee.rest.beans.QueryParameters;
 import com.kumuluz.ee.rest.utils.JPAUtils;
-import jdk.internal.util.xml.impl.Input;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
