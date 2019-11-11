@@ -66,6 +66,22 @@
             </dependency>
 
             <dependency>
+                <artifactId>kumuluzee-config-etcd</artifactId>
+                <groupId>com.kumuluz.ee.config</groupId>
+                <version>${kumuluzee-config.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee.discovery</groupId>
+                <artifactId>kumuluzee-discovery-etcd</artifactId>
+                <version>${kumuluzee-discovery.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.kumuluz.ee.discovery</groupId>
+                <artifactId>kumuluzee-discovery-consul</artifactId>
+                <version>${kumuluzee-discovery.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.fri.code</groupId>
                 <artifactId>exercise-module-api</artifactId>
                 <version>${project.version}</version>
