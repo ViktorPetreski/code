@@ -8,6 +8,7 @@ import com.fri.code.exercises.services.beans.ExerciseMetadataBeam;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.print.attribute.standard.PresentationDirection;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -32,6 +33,13 @@ public class ExerciseMetadataResource {
     public Response getExerciseMetadata() {
         List<ExerciseMetadata> exerciseMetadata = exerciseMetadataBean.getExercisesMetadata();
         return Response.status(Response.Status.OK).entity(exerciseMetadata).build();
+    }
+
+    @GET
+    @Path("/config")
+    public Response getConfig() {
+        String response = exerciseMetadataBean.getConfig();
+        return Response.ok(response).build();
     }
 
     @GET

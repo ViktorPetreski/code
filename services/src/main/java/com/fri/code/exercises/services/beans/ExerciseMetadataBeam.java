@@ -6,6 +6,7 @@ import com.fri.code.exercises.lib.ExerciseMetadata;
 import com.fri.code.exercises.lib.InputMetadata;
 import com.fri.code.exercises.models.converters.ExerciseMetadataConverter;
 import com.fri.code.exercises.models.entities.ExerciseMetadataEntity;
+import com.fri.code.exercises.services.config.IntegrationConfiguration;
 import com.kumuluz.ee.rest.beans.QueryParameters;
 import com.kumuluz.ee.rest.utils.JPAUtils;
 
@@ -38,6 +39,9 @@ public class ExerciseMetadataBeam {
     @Inject
     private EntityManager em;
 
+    @Inject
+    private IntegrationConfiguration integrationConfiguration;
+
     private Client httpClient;
 
     private String baseURL;
@@ -51,6 +55,17 @@ public class ExerciseMetadataBeam {
         compilerApiUrl = "https://api.jdoodle.com/v1/execute";
     }
 
+    public String getConfig() {
+        String response =
+                "{" +
+                        "\"booleanProperty\": \"%b\"," +
+                        "}";
+
+        response = String.format(
+                response,
+                integrationConfiguration.isOrderServiceEnabled());
+        return response;
+    }
 //    @SuppressWarnings("JpaQueryApiInspection")
     public List<ExerciseMetadata> getExercisesMetadata() {
         TypedQuery<ExerciseMetadataEntity> query = em.createNamedQuery("ExerciseMetadataEntity.getAll", ExerciseMetadataEntity.class);
@@ -70,7 +85,8 @@ public class ExerciseMetadataBeam {
         }
 
         ExerciseMetadata exerciseMetadata = ExerciseMetadataConverter.toDto(entity);
-        exerciseMetadata.setInputs(getInputsForExercise(exerciseID));
+//        if(integrationConfiguration.isOrderServiceEnabled())
+            exerciseMetadata.setInputs(getInputsForExercise(exerciseID));
 
         return exerciseMetadata;
     }
