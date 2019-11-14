@@ -8,14 +8,14 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 @ConfigBundle("configuration-properties")
 public class IntegrationConfiguration {
-    @ConfigValue(value = "code-inputs-service.enabled", watch = true)
-    private boolean orderServiceEnabled;
+    @ConfigValue(value = "code-inputs.enabled", watch = true)
+    private boolean inputsServiceEnabled;
 
-    public boolean isOrderServiceEnabled() {
-        return orderServiceEnabled;
+    public boolean isInputsServiceEnabled() {
+        return inputsServiceEnabled;
     }
 
-    public void setOrderServiceEnabled(boolean orderServiceEnabled) {
-        this.orderServiceEnabled = orderServiceEnabled;
+    public void setInputsServiceEnabled(boolean inputsServiceEnabled) {
+        this.inputsServiceEnabled = inputsServiceEnabled;
     }
 }

@@ -16,6 +16,9 @@ kumuluzee:
   config:
     etcd:
       hosts: http://localhost:2379
+  discovery:
+    etcd:
+      hosts: http://localhost:2379
 configuration-properties:
-  code-inputs-service:
+  code-inputs:
     enabled: true
