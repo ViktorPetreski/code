@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
   exercises:
-    image: petreskiv/code-exercises:1.0.0-SNAPSHOT-9.1
+    image: petreskiv/code-exercises:1.0.0-SNAPSHOT-10.1
     container_name: exercise-metadata
     environment:
       KUMULUZEE_DATASOURCES0_CONNECTIONURL: jdbc:postgresql://postgres:5432/exercise-metadata

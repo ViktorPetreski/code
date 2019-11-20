@@ -45,32 +45,29 @@ public class ExerciseMetadataBeam {
     private IntegrationConfiguration integrationConfiguration;
 
     private Client httpClient;
-
-    @Inject
-    @DiscoverService(value = "code-inputs")
-    private Optional<String> basePath;
-//    private String baseURL;
+//
+//    @Inject
+//    @DiscoverService(value = "code-inputs")
+//    private Optional<String> basePath;
+    private String baseURL;
 
     private String compilerApiUrl;
 
     @PostConstruct
     void init() {
         httpClient = ClientBuilder.newClient();
-//        baseURL = "http://localhost:8081";
+        baseURL = integrationConfiguration.getInputsServiceURL();
         compilerApiUrl = "https://api.jdoodle.com/v1/execute";
     }
 
     public String getConfig() {
         String response =
                 "{" + "\"code-inputs-enabled\": \"%b\"," + "\"code-inputs-url-exists\": \"%b\",";
-        if (basePath.isPresent()) {
-            response += String.format("\"code-inputs-url\": \"%s\"", basePath.get());
-        }
         response += "}";
         response = String.format(
                 response,
                 integrationConfiguration.isInputsServiceEnabled(),
-                basePath.isPresent()
+                integrationConfiguration.getInputsServiceURL()
                 );
         return response;
     }
@@ -135,10 +132,10 @@ public class ExerciseMetadataBeam {
     }
 
     public List<InputMetadata> getInputsForExercise(Integer exerciseID) {
-        if(basePath.isPresent()) {
+//        if(basePath.isPresent()) {
             try {
                 return httpClient
-                        .target(String.format("%s/v1/inputs", basePath.get()))
+                        .target(String.format("%s/v1/inputs", baseURL))
                         .queryParam("exerciseID", exerciseID)
                         .request().get(new GenericType<List<InputMetadata>>() {
                         });
@@ -146,8 +143,8 @@ public class ExerciseMetadataBeam {
                 log.severe(e.getMessage());
                 throw new InternalServerErrorException(e);
             }
-        }
-        return null;
+//        }
+//        return null;
     }
 
     public List<CompilerOutput> getOutput(List<InputMetadata> inputs, ExerciseMetadata exercise) {

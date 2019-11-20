@@ -11,6 +11,17 @@ public class IntegrationConfiguration {
     @ConfigValue(value = "code-inputs.enabled", watch = true)
     private boolean inputsServiceEnabled;
 
+    public String getInputsServiceURL() {
+        return inputsServiceURL;
+    }
+
+    public void setInputsServiceURL(String inputsServiceURL) {
+        this.inputsServiceURL = inputsServiceURL;
+    }
+
+    @ConfigValue(value = "code-inputs.endpoint", watch = true)
+    private String inputsServiceURL;
+
     public boolean isInputsServiceEnabled() {
         return inputsServiceEnabled;
     }
