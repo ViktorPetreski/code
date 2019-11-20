@@ -62,8 +62,11 @@ public class ExerciseMetadataBeam {
 
     public String getConfig() {
         String response =
-                "{" + "\"code-inputs-enabled\": \"%b\"," + "\"code-inputs-url-exists\": \"%b\"," + "}";
-
+                "{" + "\"code-inputs-enabled\": \"%b\"," + "\"code-inputs-url-exists\": \"%b\",";
+        if (basePath.isPresent()) {
+            response += String.format("\"code-inputs-url\": \"%s\"", basePath.get());
+        }
+        response += "}";
         response = String.format(
                 response,
                 integrationConfiguration.isInputsServiceEnabled(),
@@ -136,7 +139,7 @@ public class ExerciseMetadataBeam {
         if(basePath.isPresent()) {
             try {
                 return httpClient
-                        .target(basePath.get() + "/v1/inputs?exerciseID=" + exerciseID)
+                        .target(String.format("%s/v1/inputs?exerciseID=%d", basePath.get(), exerciseID))
                         .request().get(new GenericType<List<InputMetadata>>() {
                         });
             } catch (WebApplicationException | ProcessingException e) {
