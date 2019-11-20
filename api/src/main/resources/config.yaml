@@ -22,4 +22,4 @@ kumuluzee:
 configuration-properties:
   code-inputs:
     enabled: true
-    endpoint: http://code-inputs:8081
+    endpoint: http://inputs_container:8081
