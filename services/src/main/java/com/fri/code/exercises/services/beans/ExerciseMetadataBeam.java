@@ -74,7 +74,6 @@ public class ExerciseMetadataBeam {
                 );
         return response;
     }
-//    @SuppressWarnings("JpaQueryApiInspection")
     public List<ExerciseMetadata> getExercisesMetadata() {
         TypedQuery<ExerciseMetadataEntity> query = em.createNamedQuery("ExerciseMetadataEntity.getAll", ExerciseMetadataEntity.class);
         return query.getResultList().stream().map(ExerciseMetadataConverter::toDto).collect(Collectors.toList());
@@ -139,7 +138,8 @@ public class ExerciseMetadataBeam {
         if(basePath.isPresent()) {
             try {
                 return httpClient
-                        .target(String.format("%s/v1/inputs?exerciseID=%d", basePath.get(), exerciseID))
+                        .target(String.format("%s/v1/inputs", basePath.get()))
+                        .queryParam("exerciseID", exerciseID)
                         .request().get(new GenericType<List<InputMetadata>>() {
                         });
             } catch (WebApplicationException | ProcessingException e) {
