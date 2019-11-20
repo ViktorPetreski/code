@@ -1,0 +1,1 @@
+INSERT INTO exercise_metadata (content, description, subjectID) VALUES ('What is 50+50?', 'Calculate using python equation', 1), ('First number in N', 'Calculate using python equation', 2)

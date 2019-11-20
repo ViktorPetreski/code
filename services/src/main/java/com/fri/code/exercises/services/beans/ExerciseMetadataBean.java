@@ -1,7 +1,5 @@
 package com.fri.code.exercises.services.beans;
 
-import com.fri.code.exercises.lib.CompilerOutput;
-import com.fri.code.exercises.lib.CompilerReadyInput;
 import com.fri.code.exercises.lib.ExerciseMetadata;
 import com.fri.code.exercises.lib.InputMetadata;
 import com.fri.code.exercises.models.converters.ExerciseMetadataConverter;
@@ -26,17 +24,15 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 
 @ApplicationScoped
-public class ExerciseMetadataBeam {
+public class ExerciseMetadataBean {
 
-    private Logger log = Logger.getLogger(ExerciseMetadataBeam.class.getName());
+    private Logger log = Logger.getLogger(ExerciseMetadataBean.class.getName());
 
     @Inject
     private EntityManager em;
@@ -45,29 +41,32 @@ public class ExerciseMetadataBeam {
     private IntegrationConfiguration integrationConfiguration;
 
     private Client httpClient;
-//
-//    @Inject
-//    @DiscoverService(value = "code-inputs")
-//    private Optional<String> basePath;
-    private String baseURL;
+
+    @Inject
+    @DiscoverService(value = "code-inputs")
+    private Optional<String> basePath;
+//    private String baseURL;
 
     private String compilerApiUrl;
 
     @PostConstruct
     void init() {
         httpClient = ClientBuilder.newClient();
-        baseURL = integrationConfiguration.getInputsServiceURL();
+//        baseURL = "http://localhost:8081";
         compilerApiUrl = "https://api.jdoodle.com/v1/execute";
     }
 
     public String getConfig() {
         String response =
                 "{" + "\"code-inputs-enabled\": \"%b\"," + "\"code-inputs-url-exists\": \"%b\",";
+        if (basePath.isPresent()) {
+            response += String.format("\"code-inputs-url\": \"%s\"", basePath.get());
+        }
         response += "}";
         response = String.format(
                 response,
                 integrationConfiguration.isInputsServiceEnabled(),
-                integrationConfiguration.getInputsServiceURL()
+                basePath.isPresent()
                 );
         return response;
     }
@@ -85,7 +84,7 @@ public class ExerciseMetadataBeam {
         ExerciseMetadataEntity entity = em.find(ExerciseMetadataEntity.class, exerciseID);
 
         if (entity == null) {
-            throw new NotFoundException();
+            throw new NotFoundException("The exercise does not exist");
         }
 
         ExerciseMetadata exerciseMetadata = ExerciseMetadataConverter.toDto(entity);
@@ -111,7 +110,27 @@ public class ExerciseMetadataBeam {
         }
 
         return ExerciseMetadataConverter.toDto(exerciseMetadataEntity);
+    }
 
+    public ExerciseMetadata putExerciseMetadata(Integer exerciseID, ExerciseMetadata exerciseMetadata) {
+        ExerciseMetadataEntity entity = em.find(ExerciseMetadataEntity.class, exerciseID);
+        if (entity == null) {
+           return null;
+        }
+
+        ExerciseMetadataEntity updatedEntity = ExerciseMetadataConverter.toEntity(exerciseMetadata);
+
+        try {
+            beginTx();
+            updatedEntity.setId(entity.getId());
+            updatedEntity = em.merge(updatedEntity);
+            commitTx();
+        } catch (Exception e) {
+            log.severe(e.getMessage());
+            rollbackTx();
+        }
+
+        return ExerciseMetadataConverter.toDto(updatedEntity);
     }
 
     public boolean deleteExerciseMetadata(Integer exerciseID) {
@@ -132,10 +151,10 @@ public class ExerciseMetadataBeam {
     }
 
     public List<InputMetadata> getInputsForExercise(Integer exerciseID) {
-//        if(basePath.isPresent()) {
+        if(basePath.isPresent()) {
             try {
                 return httpClient
-                        .target(String.format("%s/v1/inputs", baseURL))
+                        .target(String.format("%s/v1/inputs", basePath.get()))
                         .queryParam("exerciseID", exerciseID)
                         .request().get(new GenericType<List<InputMetadata>>() {
                         });
@@ -143,29 +162,17 @@ public class ExerciseMetadataBeam {
                 log.severe(e.getMessage());
                 throw new InternalServerErrorException(e);
             }
-//        }
-//        return null;
+        }
+        return null;
     }
 
-    public List<CompilerOutput> getOutput(List<InputMetadata> inputs, ExerciseMetadata exercise) {
+    public Map<Integer, Boolean> getOutput(Integer exerciseID) {
 //        String content = inputMetadata.getContent();
-        List<CompilerOutput> outputs = new ArrayList<>();
-        for(InputMetadata in : inputs) {
-            String script = "x=input()\nprint(x)"; // treba da e getScript(exerciseID, currentUserID);
-            CompilerReadyInput input = new CompilerReadyInput();
-            input.setLanguage("python3"); // treba da e setLanguage(getSubject(exerciseID).getLanguage())
-            input.setScript(script);
-            if(!in.getContent().isEmpty()) input.setStdin(in.getContent());
-            input.setVersionIndex("2");
-            try {
-                CompilerOutput out = httpClient.target(compilerApiUrl).request().post(Entity.entity(input, MediaType.APPLICATION_JSON), CompilerOutput.class);
-                outputs.add(out);
-            } catch (WebApplicationException | ProcessingException e) {
-                log.severe(e.getMessage());
-                throw new InternalServerErrorException(e);
-            }
-        }
-        return outputs;
+        List<InputMetadata> inputs = getInputsForExercise(exerciseID);
+        log.severe(String.valueOf(inputs.size()));
+        String outputURL = "http://localhost:8082/v1/outputs/results/";
+        System.out.println(Entity.entity(inputs, MediaType.APPLICATION_JSON));
+        return httpClient.target(outputURL).request().post(Entity.entity(inputs, MediaType.APPLICATION_JSON), HashMap.class);
     }
 
 
@@ -183,5 +190,6 @@ public class ExerciseMetadataBeam {
         if (em.getTransaction().isActive())
             em.getTransaction().rollback();
     }
+
 
 }
