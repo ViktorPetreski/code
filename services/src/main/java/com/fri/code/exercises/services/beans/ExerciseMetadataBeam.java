@@ -62,13 +62,13 @@ public class ExerciseMetadataBeam {
 
     public String getConfig() {
         String response =
-                "{" +
-                        "\"booleanProperty\": \"%b\"," +
-                        "}";
+                "{" + "\"code-inputs-enabled\": \"%b\"," + "\"code-inputs-url-exists\": \"%b\"," + "}";
 
         response = String.format(
                 response,
-                integrationConfiguration.isInputsServiceEnabled());
+                integrationConfiguration.isInputsServiceEnabled(),
+                basePath.isPresent()
+                );
         return response;
     }
 //    @SuppressWarnings("JpaQueryApiInspection")
@@ -90,7 +90,7 @@ public class ExerciseMetadataBeam {
         }
 
         ExerciseMetadata exerciseMetadata = ExerciseMetadataConverter.toDto(entity);
-//        if(integrationConfiguration.isOrderServiceEnabled())
+        if(integrationConfiguration.isInputsServiceEnabled())
             exerciseMetadata.setInputs(getInputsForExercise(exerciseID));
 
         return exerciseMetadata;
