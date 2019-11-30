@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: code-exercises-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: code-exercises
+  template:
+    metadata:
+      labels:
+        app: code-exercises
+    spec:
+      containers:
+      - image: petreskiv/code-exercises:1.0.0-SNAPSHOT-12.1
+        name: code-exercises
+        env:
+          - name: KUMULUZEE_DISCOVERY_CLUSTER
+            value: gcloud
+          - name: KUMULUZEE_DISCOVERY_ETCD_HOSTS
+            value: http://etcd:2379
+          - name: KUMULUZEE_CONFIG_ETCD_HOSTS
+            value: http://etcd:2379
+          - name: KUMULUZEE_SERVER_BASEURL
+            value: http://23.236.48.195:8080
+          - name: KUMULUZEE_DATASOURCES0_CONNECTIONURL
+            value: jdbc:postgresql://104.155.153.73:5432/pg-exercises
+          - name: KUMULUZEE_DATASOURCES0_USERNAME
+            value: postgres
+          - name: KUMULUZEE_DATASOURCES0_PASSWORD
+            value: laptop
+        ports:
+        - containerPort: 8080
+          name: server
+          protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: code-exercises
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: server
+  selector:
+    app: code-exercises
