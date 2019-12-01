@@ -13,7 +13,7 @@ spec:
         app: code-exercises
     spec:
       containers:
-        - image: petreskiv/code-exercises:1.0.0-SNAPSHOT-18.1
+        - image: petreskiv/code-exercises:1.0.0-SNAPSHOT-19.1
           name: code-exercises
           env:
             - name: KUMULUZEE_DISCOVERY_CLUSTER
@@ -25,7 +25,7 @@ spec:
             - name: KUMULUZEE_SERVER_BASEURL
               value: http://34.67.168.202:8080
             - name: KUMULUZEE_DATASOURCES0_CONNECTIONURL
-              value: jdbc:postgresql://34.69.22.212:5432/postgres
+              value: jdbc:postgresql://10.64.240.3:5432/postgres
             - name: KUMULUZEE_DATASOURCES0_USERNAME
               value: postgres
             - name: KUMULUZEE_DATASOURCES0_PASSWORD

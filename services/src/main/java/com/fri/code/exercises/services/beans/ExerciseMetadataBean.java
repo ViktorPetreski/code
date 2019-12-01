@@ -49,25 +49,26 @@ public class ExerciseMetadataBean {
     private Optional<String> outputsPath;
 //    private String baseURL;
 
-    private String compilerApiUrl;
 
     @PostConstruct
     void init() {
         httpClient = ClientBuilder.newClient();
-//        baseURL = "http://localhost:8081";
-        compilerApiUrl = "https://api.jdoodle.com/v1/execute";
     }
 
     public String getConfig() {
         String response =
-                "{" + "\"code-inputs-enabled\": \"%b\"," + "\"code-inputs-url-exists\": \"%b\",";
+                "{" + "\"code-inputs-enabled\": \"%b\"," + "\"code-outputs-enabled\": \"%b\"," + "\"code-inputs-url-exists\": \"%b\",";
         if (basePath.isPresent()) {
-            response += String.format("\"code-inputs-url\": \"%s\"", basePath.get());
+            response += String.format("\"code-inputs-url\": \"%s\" \n,", basePath.get());
+        }
+        if (outputsPath.isPresent()) {
+            response += String.format("\"code-outputs-url\": \"%s\"", outputsPath.get());
         }
         response += "}";
         response = String.format(
                 response,
                 integrationConfiguration.isInputsServiceEnabled(),
+                integrationConfiguration.isOutputsServiceEnabled(),
                 basePath.isPresent()
                 );
         return response;
