@@ -14,15 +14,13 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.*;
 import java.util.logging.Logger;
@@ -45,6 +43,10 @@ public class ExerciseMetadataBean {
     @Inject
     @DiscoverService(value = "code-inputs")
     private Optional<String> basePath;
+
+    @Inject
+    @DiscoverService(value = "code-outputs")
+    private Optional<String> outputsPath;
 //    private String baseURL;
 
     private String compilerApiUrl;
@@ -168,11 +170,19 @@ public class ExerciseMetadataBean {
 
     public Map<Integer, Boolean> getOutput(Integer exerciseID) {
 //        String content = inputMetadata.getContent();
-        List<InputMetadata> inputs = getInputsForExercise(exerciseID);
-        log.severe(String.valueOf(inputs.size()));
-        String outputURL = "http://localhost:8082/v1/outputs/results/";
-        System.out.println(Entity.entity(inputs, MediaType.APPLICATION_JSON));
-        return httpClient.target(outputURL).request().post(Entity.entity(inputs, MediaType.APPLICATION_JSON), HashMap.class);
+        if(integrationConfiguration.isOutputsServiceEnabled() && outputsPath.isPresent()) {
+            List<InputMetadata> inputs = getInputsForExercise(exerciseID);
+                try {
+                    String outputURL = String.format("%s/v1/outputs/results/", outputsPath.get());
+                    return httpClient.target(outputURL).request().post(Entity.entity(inputs, MediaType.APPLICATION_JSON), HashMap.class);
+                } catch (WebApplicationException | ProcessingException e) {
+                    log.severe(e.getMessage());
+                    throw new InternalServerErrorException(e);
+                }
+        }
+        else{
+            throw new ServiceUnavailableException();
+        }
     }
 
 

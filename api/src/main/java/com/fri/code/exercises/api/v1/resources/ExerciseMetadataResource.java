@@ -95,9 +95,14 @@ public class ExerciseMetadataResource {
         try {
             Map<Integer, Boolean> outputs = exerciseMetadataBean.getOutput(exerciseID);
             return Response.status(STATUS_OK).entity(outputs).build();
-
-        }catch (Exception e) {
+        } catch (InternalServerErrorException e) {
             return Response.status(Response.Status.NOT_FOUND).entity(getNotFoundApiError(e.getMessage())).build();
+        } catch (ServiceUnavailableException e) {
+            ApiError error = new ApiError();
+            error.setStatus(Response.Status.SERVICE_UNAVAILABLE.getStatusCode());
+            error.setCode(Response.Status.SERVICE_UNAVAILABLE.toString());
+            error.setMessage("The service is currently disabled");
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(error).build();
         }
 
     }
