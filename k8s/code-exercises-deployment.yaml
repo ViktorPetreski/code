@@ -13,7 +13,7 @@ spec:
         app: code-exercises
     spec:
       containers:
-        - image: petreskiv/code-exercises:1.0.0-SNAPSHOT-19.1
+        - image: petreskiv/code-exercises:1.0.0-SNAPSHOT-20.1
           name: code-exercises
           env:
             - name: KUMULUZEE_DISCOVERY_CLUSTER
