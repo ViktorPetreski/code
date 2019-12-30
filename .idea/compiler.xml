@@ -6,10 +6,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="lib" />
         <module name="api" />
-        <module name="services" />
         <module name="models" />
+        <module name="exerciese-services" />
+        <module name="exercise-module-api" />
+        <module name="lib" />
+        <module name="exercise-module-models" />
+        <module name="exercise-module-lib" />
+        <module name="services" />
       </profile>
     </annotationProcessing>
   </component>
