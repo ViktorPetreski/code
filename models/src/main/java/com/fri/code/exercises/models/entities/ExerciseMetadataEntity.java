@@ -7,7 +7,8 @@ import java.util.List;
 @Table(name = "exercise_metadata")
 @NamedQueries(
         value = {
-                @NamedQuery(name = "ExerciseMetadataEntity.getAll", query = "SELECT ex FROM ExerciseMetadataEntity ex")
+                @NamedQuery(name = "ExerciseMetadataEntity.getAll", query = "SELECT ex FROM ExerciseMetadataEntity ex"),
+                @NamedQuery(name = "ExerciseMetadataEntity.getExercisesForSubject", query = "SELECT ex FROM ExerciseMetadataEntity ex WHERE ex.subjectID = ?1")
         }
 )
 public class ExerciseMetadataEntity {

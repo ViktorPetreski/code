@@ -186,6 +186,11 @@ public class ExerciseMetadataBean {
         }
     }
 
+    public List<ExerciseMetadata> getExercisesForSubject(Integer subjectID) {
+        TypedQuery<ExerciseMetadataEntity> query = em.createNamedQuery("ExerciseMetadataEntity.getExercisesForSubject", ExerciseMetadataEntity.class).setParameter(1, subjectID);
+        return query.getResultList().stream().map(ExerciseMetadataConverter::toDto).collect(Collectors.toList());
+    }
+
 
     private void beginTx() {
         if (!em.getTransaction().isActive())

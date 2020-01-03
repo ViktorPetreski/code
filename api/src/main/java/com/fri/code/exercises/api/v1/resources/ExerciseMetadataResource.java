@@ -4,6 +4,7 @@ package com.fri.code.exercises.api.v1.resources;
 import com.fri.code.exercises.api.v1.dtos.ApiError;
 import com.fri.code.exercises.lib.ExerciseMetadata;
 import com.fri.code.exercises.services.beans.ExerciseMetadataBean;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -29,6 +30,7 @@ public class ExerciseMetadataResource {
     protected UriInfo uriInfo;
 
     @GET
+    @Timed
     public Response getExerciseMetadata() {
         List<ExerciseMetadata> exerciseMetadata = exerciseMetadataBean.getExercisesMetadata();
         return Response.status(Response.Status.OK).entity(exerciseMetadata).build();
@@ -105,6 +107,13 @@ public class ExerciseMetadataResource {
             return Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(error).build();
         }
 
+    }
+
+    @GET
+    @Path("/subject/{subjectID}")
+    public Response getExercisesForSubject(@PathParam("subjectID") Integer subjectID) {
+        List<ExerciseMetadata> exercises = exerciseMetadataBean.getExercisesForSubject(subjectID);
+        return Response.ok(exercises).build();
     }
 
     private ApiError getNotFoundApiError(String message) {
