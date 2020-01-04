@@ -3,6 +3,7 @@ package com.fri.code.exercises.api.v1.resources;
 
 import com.fri.code.exercises.api.v1.dtos.ApiError;
 import com.fri.code.exercises.lib.ExerciseMetadata;
+import com.fri.code.exercises.lib.OutputMetadata;
 import com.fri.code.exercises.services.beans.ExerciseMetadataBean;
 import org.eclipse.microprofile.metrics.annotation.Timed;
 
@@ -95,7 +96,8 @@ public class ExerciseMetadataResource {
     @Path("{exerciseID}/outputs")
     public Response getOutputsForExercise(@PathParam("exerciseID") Integer exerciseID) {
         try {
-            Map<Integer, Boolean> outputs = exerciseMetadataBean.getOutput(exerciseID);
+            List<OutputMetadata> outputs = exerciseMetadataBean.getOutput(exerciseID);
+            exerciseMetadataBean.checkIfSolved(outputs, exerciseID);
             return Response.status(STATUS_OK).entity(outputs).build();
         } catch (InternalServerErrorException e) {
             return Response.status(Response.Status.NOT_FOUND).entity(getNotFoundApiError(e.getMessage())).build();

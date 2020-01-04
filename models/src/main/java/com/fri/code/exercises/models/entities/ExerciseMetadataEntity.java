@@ -30,6 +30,9 @@ public class ExerciseMetadataEntity {
     @ElementCollection
     private List<String> inputs;
 
+    @Column(name = "isFinished")
+    private Boolean isFinished;
+
     public List<String> getInputs() {
         return inputs;
     }
@@ -69,5 +72,13 @@ public class ExerciseMetadataEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getFinished() {
+        return isFinished;
+    }
+
+    public void setFinished(Boolean finished) {
+        isFinished = finished;
     }
 }

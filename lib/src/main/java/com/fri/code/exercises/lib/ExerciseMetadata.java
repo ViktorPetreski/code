@@ -6,8 +6,8 @@ public class ExerciseMetadata {
     private Integer exerciseID;
     private String content;
     private String description;
-
     private Integer subjectID;
+    private Boolean isFinished;
 
     private List<InputMetadata> inputs;
 
@@ -51,5 +51,11 @@ public class ExerciseMetadata {
         this.subjectID = subjectID;
     }
 
+    public Boolean getFinished() {
+        return isFinished;
+    }
 
+    public void setFinished(Boolean finished) {
+        isFinished = finished;
+    }
 }

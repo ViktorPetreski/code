@@ -2,6 +2,7 @@ package com.fri.code.exercises.services.beans;
 
 import com.fri.code.exercises.lib.ExerciseMetadata;
 import com.fri.code.exercises.lib.InputMetadata;
+import com.fri.code.exercises.lib.OutputMetadata;
 import com.fri.code.exercises.models.converters.ExerciseMetadataConverter;
 import com.fri.code.exercises.models.entities.ExerciseMetadataEntity;
 import com.fri.code.exercises.services.config.IntegrationConfiguration;
@@ -169,13 +170,13 @@ public class ExerciseMetadataBean {
         return null;
     }
 
-    public Map<Integer, Boolean> getOutput(Integer exerciseID) {
-//        String content = inputMetadata.getContent();
+    public  List<OutputMetadata> getOutput(Integer exerciseID) {
         if(integrationConfiguration.isOutputsServiceEnabled() && outputsPath.isPresent()) {
             List<InputMetadata> inputs = getInputsForExercise(exerciseID);
                 try {
                     String outputURL = String.format("%s/v1/outputs/results/", outputsPath.get());
-                    return httpClient.target(outputURL).request().post(Entity.entity(inputs, MediaType.APPLICATION_JSON), HashMap.class);
+                    Response r = httpClient.target(outputURL).request(MediaType.APPLICATION_JSON).post(Entity.entity(inputs, MediaType.APPLICATION_JSON));
+                    return r.readEntity(new GenericType<List<OutputMetadata>>(){});
                 } catch (WebApplicationException | ProcessingException e) {
                     log.severe(e.getMessage());
                     throw new InternalServerErrorException(e);
@@ -183,6 +184,28 @@ public class ExerciseMetadataBean {
         }
         else{
             throw new ServiceUnavailableException();
+        }
+    }
+
+    public void checkIfSolved(List<OutputMetadata> outputs, Integer exerciseID) {
+        int count = 0;
+        for(OutputMetadata output : outputs) {
+           if(output.getSolved()) count++;
+        }
+        if (count == outputs.size()) updateSolved(exerciseID);
+    }
+
+    public void updateSolved(Integer exerciseID) {
+        ExerciseMetadataEntity exerciseMetadataEntity = em.find(ExerciseMetadataEntity.class, exerciseID);
+        if (exerciseMetadataEntity == null) {
+            throw new NotFoundException("Exercise not found");
+        }
+        try {
+            beginTx();
+            exerciseMetadataEntity.setFinished(true);
+            commitTx();
+        } catch (Exception e) {
+            rollbackTx();
         }
     }
 

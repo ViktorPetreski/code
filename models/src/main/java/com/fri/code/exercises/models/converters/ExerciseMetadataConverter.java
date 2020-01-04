@@ -10,6 +10,7 @@ public class ExerciseMetadataConverter {
         dto.setDescription(entity.getDescription());
         dto.setExerciseID(entity.getId());
         dto.setSubjectID(entity.getSubjectID());
+        dto.setFinished(entity.getFinished());
 //        dto.setInputs(entity.getInputs());
         return dto;
     }
@@ -20,6 +21,7 @@ public class ExerciseMetadataConverter {
         entity.setDescription(exerciseMetadata.getDescription());
         entity.setId(exerciseMetadata.getExerciseID());
         entity.setSubjectID(exerciseMetadata.getSubjectID());
+        entity.setFinished(exerciseMetadata.getFinished());
 //        entity.setInputs(exerciseMetadata.getInputs());
         return entity;
     }

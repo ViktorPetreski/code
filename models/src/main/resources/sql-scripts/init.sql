@@ -1,1 +1,1 @@
-INSERT INTO exercise_metadata (content, description, subjectID) VALUES ('For this exercise you need to write a function that will print the input', 'Print', 1), ('Write a function that will print the square of a number', 'Calculate using python equation', 2)
+INSERT INTO exercise_metadata (content, description, subjectID) VALUES ('For this exercise you need to write a function that will print the input', 'Print', 1), ('Write a function that will print the square of a number', 'Squares', 2)
