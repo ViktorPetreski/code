@@ -10,7 +10,8 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 @ApplicationPath("/v1")
 @RegisterService
-@OpenAPIDefinition(info = @Info(title = "ExercisesAPI", version = "v1.0.0"), servers = @Server(url = "http://34.67.168.202:8080/v1"), security = @SecurityRequirement(name = "openid-connect"))
+@OpenAPIDefinition(info = @Info(title = "ExercisesAPI", version = "v1.0.0"), servers = @Server(url = "http://34.67.168.202:8080/v1"), security
+        = @SecurityRequirement(name = "openid-connect"))
 public class CodeApplication extends Application {
 
 }
