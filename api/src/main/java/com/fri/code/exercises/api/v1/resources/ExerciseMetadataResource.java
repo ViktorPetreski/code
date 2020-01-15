@@ -5,6 +5,7 @@ import com.fri.code.exercises.api.v1.dtos.ApiError;
 import com.fri.code.exercises.lib.ExerciseMetadata;
 import com.fri.code.exercises.lib.OutputMetadata;
 import com.fri.code.exercises.services.beans.ExerciseMetadataBean;
+import com.fri.code.exercises.services.streaming.EventProducerImpl;
 import com.kumuluz.ee.logs.cdi.Log;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -34,6 +35,9 @@ public class ExerciseMetadataResource {
     public static Response.Status STATUS_OK = Response.Status.OK;
     @Inject
     private ExerciseMetadataBean exerciseMetadataBean;
+
+    @Inject
+    private EventProducerImpl eventProducer;
 
     @Context
     protected UriInfo uriInfo;
@@ -138,7 +142,8 @@ public class ExerciseMetadataResource {
     public Response getOutputsForExercise(@PathParam("exerciseID") Integer exerciseID) {
         try {
             List<OutputMetadata> outputs = exerciseMetadataBean.getOutput(exerciseID);
-            exerciseMetadataBean.checkIfSolved(outputs, exerciseID);
+            Integer solved = exerciseMetadataBean.checkIfSolved(outputs, exerciseID);
+            eventProducer.produceExercises(solved);
             return Response.status(STATUS_OK).entity(outputs).build();
         } catch (InternalServerErrorException e) {
             return Response.status(Response.Status.NOT_FOUND).entity(getNotFoundApiError(e.getMessage())).build();

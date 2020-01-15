@@ -187,12 +187,15 @@ public class ExerciseMetadataBean {
         }
     }
 
-    public void checkIfSolved(List<OutputMetadata> outputs, Integer exerciseID) {
+    public Integer checkIfSolved(List<OutputMetadata> outputs, Integer exerciseID) {
         int count = 0;
         for(OutputMetadata output : outputs) {
            if(output.getSolved()) count++;
         }
-        if (count == outputs.size()) updateSolved(exerciseID);
+        if (count == outputs.size())
+            updateSolved(exerciseID);
+
+        return count;
     }
 
     public void updateSolved(Integer exerciseID) {
