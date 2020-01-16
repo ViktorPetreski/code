@@ -63,7 +63,8 @@ kumuluzee:
         value-serializer: org.apache.kafka.common.serialization.StringSerializer
         security-protocol: SASL_SSL
         sasl-mechanism: SCRAM-SHA-256
-        group-id: newer
+        group-id: code
+        sasl-jaas-config: 'org.apache.kafka.common.security.scram.ScramLoginModule required username="4nqq16cf" password="v4QobppxNg_Xe1Dhx4NrDTHlN5cfkxZZ";'
         enable-auto-commit: true
         auto-commit-interval-ms: 1000
         auto-offset-reset: earliest

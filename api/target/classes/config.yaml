@@ -50,6 +50,25 @@ kumuluzee:
                                  </Root>
                              </Loggers>
                          </Configuration>'
+  streaming:
+    kafka:
+      producer:
+        bootstrap-servers: moped-01.srvs.cloudkafka.com:9094
+        acks: all
+        retries: 0
+        batch-size: 16384
+        linger-ms: 1
+        buffer-memory: 33554432
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.apache.kafka.common.serialization.StringSerializer
+        security-protocol: SASL_SSL
+        sasl-mechanism: SCRAM-SHA-256
+        group-id: code
+        sasl-jaas-config: 'org.apache.kafka.common.security.scram.ScramLoginModule required username="4nqq16cf" password="v4QobppxNg_Xe1Dhx4NrDTHlN5cfkxZZ";'
+        enable-auto-commit: true
+        auto-commit-interval-ms: 1000
+        auto-offset-reset: earliest
+        session-timeout-ms: 30000
 configuration-properties:
   code-inputs:
     enabled: true
