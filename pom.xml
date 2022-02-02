@@ -38,7 +38,7 @@
         <kumuluzee-openapi-mp.version>1.0.0-SNAPSHOT</kumuluzee-openapi-mp.version>
         <kumuluzee-openapi.varsion>1.1.0-SNAPSHOT</kumuluzee-openapi.varsion>
         <kumuluzee-streaming.version>1.2.0</kumuluzee-streaming.version>
-        <postgresql.version>42.2.8</postgresql.version>
+        <postgresql.version>42.2.25</postgresql.version>
     </properties>
 
     <repositories>
